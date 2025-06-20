@@ -1,0 +1,37 @@
+from collections import defaultdict, deque
+
+class Solution:
+  def canFinish(self, numCourses: int, prerequisites: list[list[int]]) -> bool:
+    graph = defaultdict(list)
+    indegree = [0] * numCourses
+
+    for course, prerep in prerequisites:
+      graph[prerep].append(course)
+      indegree[course] += 1
+      print(f"indegree[{course}] incremented, now {indegree[course]}")
+
+    queue = deque([i for i in range(numCourses) if indegree[i]==0])
+    completed = 0
+
+    while queue: 
+      current = queue.popleft()
+      completed +=1
+
+      for neighbor in graph[current]:
+        indegree[neighbor]-=1
+        if indegree[neighbor] == 0:
+          queue.append(neighbor)
+          print(f"indegree[{neighbor}] decremented, now {indegree[neighbor]} and added to queue")
+
+    return completed == numCourses
+  
+
+
+
+
+numCourses = 4
+prerequisites = [[1,0],[2,1],[3,2]]
+course_schedule = Solution()
+result=course_schedule.canFinish(numCourses, prerequisites)
+print(f"Can finish all courses: {result}")  # Expected output: True
+
